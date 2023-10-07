@@ -17,9 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from content import views
+# from . import settings
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.show_base, name='base'),
+    path('user/',include('user.urls')),
+    path('content/',include('content.urls')),
+    # path('spotify/',include('spotify.urls')),
     # path('about/', include('content.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
