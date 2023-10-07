@@ -1,0 +1,159 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0px;
+    padding: 0;
+    background-color: #1a1a1a; /* Dark background color */
+    color: #fff;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: #1DB954; 
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+    background-color: #333;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    color: #1DB954;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+/* ... (previous styles remain unchanged) ... */
+
+.logo img {
+    width: 50px; /* Set the width of the music icon */
+    vertical-align: middle;
+    margin-right: 10px; /* Add some spacing between the icon and the search bar */
+}
+
+.search-bar input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    width: 300px;
+    outline: none;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a; /* Dark background color */
+    color: #fff;
+    position: relative;
+    min-height: 100vh;
+}
+
+.music-player {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.player-controls button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.player-controls button:hover {
+    color: #1DB954; /* Spotify green on hover */
+}
+
+#audio-player {
+    display: none; /* Hide the default audio controls */
+}
+
+
+/* ... (previous styles remain unchanged) ... */
+
+.album-details {
+    padding: 20px;
+    background-color: #333;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.album-tracks {
+    padding: 20px;
+    background-color: #333;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.music-player {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.player-controls button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.player-controls button:hover {
+    color: #1DB954; /* Spotify green on hover */
+}
+
+#audio-player {
+    display: none; /* Hide the default audio controls */
+}
+
+/* ... (other styles) ... */
+
