@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if tracks %}
+    {% for track in tracks %}
+        <div class="song flex items-center">
+            <button onclick="playSong('{{ track.preview_url }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                Play
+            </button>
+            {{ track.name }} - {{ track.artists.0.name }}
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <section class="featured">
+        <h2>Featured Music</h2>
+        
+        {% for track in featured_tracks %}
+        <div class="song flex flex-col pt-5">
+            <!-- Display track album cover if available -->
+            {% if track.album_image %}
+                <div>
+                    <img src="{{ track.album_image }}" alt="{{ track.album_name }}" style="width: 50px; height: 50px;">
+                </div>
+                
+            {% endif %}
+            
+            <!-- Display track details -->
+            <div>
+                <h2> {{ track.name }}</h2>
+                <h3> by <strong>{{ track.artist_name }}</strong></h3>
+                <h3>from the album <em>{{ track.album_name }}</em></h3>
+            </div>
+
+            <!-- Optional: Display track's popularity -->
+            <p>Popularity: {{ track.track_popularity }}</p>
+            <div class="w-[30px]">
+                <button onclick="playSong('{{ track.preview_url }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                    Play
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <!-- Recommended section can remain unchanged if you're using it. Otherwise, remove or update it accordingly -->
+    <section class="recommended">
+        <h2>Top Charts</h2>
+        {% for track in top_tracks %}
+        <div class="song">
+            <button onclick="playSong('{{ track.preview_url }}')">Play</button>
+            {{ track.name }} - {{ track.artists.0.name }}
+        </div>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

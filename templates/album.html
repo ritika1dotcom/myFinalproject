@@ -1,36 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>View Album - Music Recommendation System</title>
-</head>
+{% block content %}
 
-<body>
-    <div class="container">
-        <header>
-            <h1>Album Details</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="album.html">View Album</a></li>
-                    <li><a href="collections.html">Collections</a> </li>
-                    <!-- Add more navigation links as needed -->
-                </ul>
-            </nav>
-        </header>
-
+    {% block album_details %}
         <section class="album-details">
             <!-- Album Details Here -->
         </section>
+    {% endblock album_details %}
 
+    {% block album_tracks %}
         <section class="album-tracks">
             <!-- Album Tracks Here -->
         </section>
-    </div>
-
+    {% endblock album_tracks %}
 
     <div class="album-details">
         <!-- Album Details Here -->
@@ -40,28 +22,4 @@
         <!-- Album Tracks Here -->
     </div>
 
-    <div class="music-player">
-        <div class="player-controls">
-            <button id="backward-btn">⏮️</button>
-            <button id="play-pause-btn">▶️</button>
-            <button id="forward-btn">⏭️</button>
-        </div>
-        <audio id="audio-player" controls>
-            <!-- Add source elements for your music files -->
-            <source src="song.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-    </div>
-
-    <!-- ... (other body content) ... -->
-</body>
-
-</html>
-
-
-    <footer>
-        <p>&copy; 2023 Music Recommendation System. All rights reserved.</p>
-    </footer>
-</body>
-
-</html>
+{% endblock content %}

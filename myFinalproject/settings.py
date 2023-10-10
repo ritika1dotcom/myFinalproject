@@ -135,6 +135,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+
 # CKEDITOR_UPLOAD_PATH = 'ck_uploads'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -142,3 +143,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SPOTIPY_CLIENT_ID = '8cd97605e5194de4bc654b4f120daf98'
+SPOTIPY_CLIENT_SECRET = '8899652981f040859a6cd2c03fa92b7e'
+

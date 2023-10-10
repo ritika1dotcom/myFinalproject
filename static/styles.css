@@ -51,7 +51,6 @@ footer {
     color: #fff;
     text-align: center;
     padding: 10px 0;
-    position: fixed;
     bottom: 0;
     width: 100%;
 }
@@ -82,17 +81,6 @@ body {
     min-height: 100vh;
 }
 
-.music-player {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    width: 100%;
-    padding: 10px 0;
-    text-align: center;
-}
-
 .player-controls button {
     background-color: transparent;
     border: none;
@@ -118,6 +106,7 @@ body {
     background-color: #333;
     margin-bottom: 20px;
     border-radius: 10px;
+    overflow-y: scroll;
 }
 
 .album-tracks {
@@ -125,6 +114,7 @@ body {
     background-color: #333;
     margin-bottom: 20px;
     border-radius: 10px;
+    overflow-y: scroll;
 }
 
 .music-player {
