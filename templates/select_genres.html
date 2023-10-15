@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" action="{% url 'select_genres' %}">
+    {% csrf_token %}
+    <div class="relative inline-block w-[250px]">
+        {{ form.genres }}
+    </div>
+    <input type="submit" value="Submit" class="w-[250px] h-[50px] border-2 text-black mt-4">
+</form>
+{% endblock %}

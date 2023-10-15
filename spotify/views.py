@@ -71,6 +71,7 @@ def featured_music(request):
             "album_name": track["album"]["name"],
             "track_popularity": track["popularity"],
             "album_image" : album_image_url,
+            "preview_url": track.get("preview_url") 
         })
 
     return render(request, 'home.html', {'featured_tracks': featured_tracks})

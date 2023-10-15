@@ -11,6 +11,6 @@ urlpatterns = [
         email_template_name='password_reset_email.html', 
         subject_template_name='password_reset_subject.txt',
         success_url=reverse_lazy('password_reset_done_with_message')
-    ), name='password_reset'),
-    path('password_reset/done_with_message/', views.password_reset_done_with_message, name='password_reset_done_with_message'),
+    ), name='password_reset_email'),
+    path('password_reset/', views.password_reset_done_with_message, name='password_reset_done_with_message'),
 ]

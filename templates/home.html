@@ -24,24 +24,17 @@
 
             <!-- Optional: Display track's popularity -->
             <p>Popularity: {{ track.track_popularity }}</p>
+            {% if user.is_authenticated %}
             <div class="w-[30px]">
                 <button onclick="playSong('{{ track.preview_url }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
                     Play
                 </button>
             </div>
+            {% endif %}
         </div>
         {% endfor %}
     </section>
 
     <!-- Recommended section can remain unchanged if you're using it. Otherwise, remove or update it accordingly -->
-    <section class="recommended">
-        <h2>Top Charts</h2>
-        {% for track in top_tracks %}
-        <div class="song">
-            <button onclick="playSong('{{ track.preview_url }}')">Play</button>
-            {{ track.name }} - {{ track.artists.0.name }}
-        </div>
-        {% endfor %}
-    </section>
 </div>
 {% endblock %}
