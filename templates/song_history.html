@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ user_obj.username }}'s Song History</h2>
+
+<table class="w-full" >
+    <thead>
+        <tr>
+            <th>Song Title</th>
+            <th>Artist</th>
+            <th>Date Played</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for song in song_history %}
+        <tr>
+            <td>{{ song.song_title }}</td>
+            <td>{{ song.artist_name }}</td>
+            <td>{{ song.date_played }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

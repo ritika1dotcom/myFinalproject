@@ -1,16 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <section class="featured">
-        <h2>Featured Music</h2>
+<div class="flex justify-center">
+    <section>
+        {% if request.user.is_authenticated %}
+            <h2>Hello {{ request.user.username }}</h2>
+        {% else %}
+            <h2>Welcome, Guest!</h2>
+        {% endif %}
         
+        <h2>Featured Music</h2>
+        <div class="flex flex-row flex-wrap gap-5">
         {% for track in featured_tracks %}
-        <div class="song flex flex-col pt-5">
+        <div class="song flex flex-col pt-5 w-1/4">
             <!-- Display track album cover if available -->
             {% if track.album_image %}
                 <div>
-                    <img src="{{ track.album_image }}" alt="{{ track.album_name }}" style="width: 50px; height: 50px;">
+                    <img src="{{ track.album_image }}" alt="{{ track.album_name }}" style="width: 100px; height: 100px;">
                 </div>
                 
             {% endif %}
@@ -26,13 +32,14 @@
             <p>Popularity: {{ track.track_popularity }}</p>
             {% if user.is_authenticated %}
             <div class="w-[30px]">
-                <button onclick="playSong('{{ track.preview_url }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                <button onclick="playSong('{{ track.preview_url }}', '{{ track.name }}', '{{ track.artist_name }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
                     Play
-                </button>
+                </button>                
             </div>
             {% endif %}
         </div>
         {% endfor %}
+    </div>
     </section>
 
     <!-- Recommended section can remain unchanged if you're using it. Otherwise, remove or update it accordingly -->

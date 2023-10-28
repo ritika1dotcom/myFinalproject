@@ -13,4 +13,6 @@ urlpatterns = [
         success_url=reverse_lazy('password_reset_done_with_message')
     ), name='password_reset_email'),
     path('password_reset/', views.password_reset_done_with_message, name='password_reset_done_with_message'),
-]
+    path('add_song_history/', views.add_song_history, name='add_song_history'),
+    path('<str:username>/', views.user_song_history, name='user_song_history'),
+]  

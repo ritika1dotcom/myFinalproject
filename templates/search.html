@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="flex flex-col gap-4">
 {% if tracks %}
     {% for track in tracks %}
         <div class="song flex items-center">
-            <button onclick="playSong('{{ track.preview_url }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+            <button onclick="playSong('{{ track.preview_url }}', '{{ track.name }}', '{{ track.artist_name }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
                 Play
-            </button>
+            </button>  
             {{ track.name }} - {{ track.artists.0.name }}
         </div>
     {% endfor %}
 {% endif %}
+</div>
 {% endblock %}

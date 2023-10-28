@@ -20,19 +20,45 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
     <script>
-        function playSong(previewUrl) {
-    console.log("Play song function called with URL: ", previewUrl);
-    
-    if (!previewUrl) {
-        console.error("No valid preview URL provided.");
-        return;
-    }
-    
-    const audioPlayer = document.getElementById('audio-player');
-    audioPlayer.src = previewUrl;
-    audioPlayer.play();
-}
+            function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
 
+        let csrfToken = getCookie('csrftoken');
+
+        function playSong(previewUrl, song_title, artist_name) {
+            console.log("Play song function called with URL: ", previewUrl);
+            
+            if (!previewUrl) {
+                console.error("No valid preview URL provided.");
+                return;
+            }
+            
+            const audioPlayer = document.getElementById('audio-player');
+            audioPlayer.src = previewUrl;
+            audioPlayer.play();
+
+            // Save song details to SongHistory if the user is authenticated
+            fetch("/user/add_song_history/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({
+                    song_title: song_title,
+                    artist_name: artist_name
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== "ok") {
+                    console.error("Error saving song history:", data.message);
+                }
+            });
+        }
     </script>
 </head>
 
@@ -56,7 +82,7 @@
 
     <div class = "bg-gradient-to-r from-purple-300 to-purple-500 h-screen flex">
         <!-- Sidebar on the left -->
-        <div class = "flex flex-col justify-between bg-gray-700 p-4 h-screen" style="width: 12rem;">
+        <div class = "flex flex-col justify-between bg-gray-700 p-4 h-screen" style="width: 13rem;">
             <ul class="flex flex-col space-y-4">
                 <!-- <a href="/" class="mb-4 text-dark no-underline" title="Icon-only">
                     <svg class="bi w-10 h-8"><use xlink:href="#bootstrap"/></svg>
@@ -72,11 +98,19 @@
                             <i class="fa fa-music" style="color: white;"> Personalized</i> 
                         </a>
                     </li>
+                    {% if user.is_authenticated %}
                     <li>
-                        <a href="#" class="flex items-center space-x-2 py-2 text-sm">
-                            <i class="fa fa-bookmark" style="color: white;"> Library</i>
+                        <a href="{% url 'user_song_history'  request.user.username %}" class="flex items-center space-x-2 py-2 text-sm">
+                            <i class="fa fa-user" style="color: white;"> Profile</i>
                         </a>
                     </li>
+                    {% else %}
+                    <li>
+                        <a href="#" class="flex items-center space-x-2 py-2 text-sm" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fa fa-user" style="color: white;"> Profile</i> 
+                        </a>
+                    </li>
+                    {% endif %}
                     {% if user.is_authenticated %}
                     <li>
                         <a href="{% url 'logout' %}" class="flex items-center space-x-2 py-2 text-sm">
@@ -106,9 +140,8 @@
                     </button>
                 </form>
             </div>
-    
             <!-- Main Content -->
-            <div class="flex-grow overflow-y-auto p-4">
+            <div class="flex-grow overflow-y-scroll no-scrollbar p-3">
                 {% block content %}
                 <!-- Default content if no block content provided by a child template. Can be left empty if not needed -->
                 {% endblock %}
@@ -125,7 +158,6 @@
                         Your browser does not support the audio element.
                     </audio>                    
             </div>
-    
         </div>
     </div>
     <!-- ... -->
