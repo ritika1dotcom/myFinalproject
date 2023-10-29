@@ -38,6 +38,22 @@ header {
     padding: 20px;
     text-align: center;
 }
+.d-flex {
+    position: relative;
+}
+
+.btn-rounded {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.d-flex:hover .btn-rounded {
+    opacity: 1;
+}
 
 nav ul {
     list-style: none;

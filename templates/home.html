@@ -10,36 +10,26 @@
         {% endif %}
         
         <h2>Featured Music</h2>
-        <div class="flex flex-row flex-wrap gap-5">
-        {% for track in featured_tracks %}
-        <div class="song flex flex-col pt-5 w-1/4">
-            <!-- Display track album cover if available -->
-            {% if track.album_image %}
-                <div>
-                    <img src="{{ track.album_image }}" alt="{{ track.album_name }}" style="width: 100px; height: 100px;">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {% for track in featured_tracks %}
+            <div class="border p-4 rounded">
+                <div class="text-center">
+                    <img src="{{ track.album_image }}" alt="{{ track.album_name }}" style="width: 200px; height: 100px;">
                 </div>
-                
-            {% endif %}
-            
-            <!-- Display track details -->
-            <div>
-                <h2> {{ track.name }}</h2>
-                <h3> by <strong>{{ track.artist_name }}</strong></h3>
-                <h3>from the album <em>{{ track.album_name }}</em></h3>
+                <div class="text-center mt-2">
+                    <h2 class="text-green-600">{{ track.name }}</h2>
+                    <h3>By <strong>{{ track.artist_name }}</strong></h3>
+                    <h3>From the album <em>{{ track.album_name }}</em></h3>
+                    <p>Popularity: {{ track.track_popularity }}</p>
+                    {% if user.is_authenticated %}
+                        <button onclick="playSong('{{ track.preview_url }}', '{{ track.name }}', '{{ track.artist_name }}','{{track.album_image}}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                            Play
+                        </button>
+                    {% endif %}
+                </div>
             </div>
-
-            <!-- Optional: Display track's popularity -->
-            <p>Popularity: {{ track.track_popularity }}</p>
-            {% if user.is_authenticated %}
-            <div class="w-[30px]">
-                <button onclick="playSong('{{ track.preview_url }}', '{{ track.name }}', '{{ track.artist_name }}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-                    Play
-                </button>                
-            </div>
-            {% endif %}
-        </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>        
     </section>
 
     <!-- Recommended section can remain unchanged if you're using it. Otherwise, remove or update it accordingly -->

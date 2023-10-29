@@ -4,7 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
-from .models import PlayHistory
+from .form import AvatarForm
+from .models import PlayHistory, UserProfile
 from django.http import JsonResponse
 
 def password_reset_done_with_message(request):
@@ -60,3 +61,15 @@ def add_song_history(request):
         )
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'ok', 'message': 'valid request'})
+
+def upload_avatar(request):
+    if request.method == 'POST':
+        form = AvatarForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile.avatar = form.cleaned_data['avatar']
+            user_profile.save()
+            return redirect('profile')
+    else:
+        form = AvatarForm()
+    return render(request, 'song_history.html', {'form': form})

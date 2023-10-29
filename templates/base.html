@@ -28,8 +28,9 @@
 
         let csrfToken = getCookie('csrftoken');
 
-        function playSong(previewUrl, song_title, artist_name) {
+        function playSong(previewUrl, song_title, artist_name,album_image) {
             console.log("Play song function called with URL: ", previewUrl);
+            console.log("Album Image URL:", album_image);
             
             if (!previewUrl) {
                 console.error("No valid preview URL provided.");
@@ -49,7 +50,8 @@
                 },
                 body: JSON.stringify({
                     song_title: song_title,
-                    artist_name: artist_name
+                    artist_name: artist_name,
+                    album_image: album_image,
                 })
             })
             .then(response => response.json())
