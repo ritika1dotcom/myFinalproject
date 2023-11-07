@@ -3,6 +3,13 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from django.conf import settings
 import random
+from .models import Song
+from .utils import discover_associations, preprocess_song_data
+from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
+import pandas as pd
+from django.http import HttpResponse
+
 
 # Fetch client credentials from settings
 SPOTIPY_CLIENT_ID = settings.SPOTIPY_CLIENT_ID
@@ -76,3 +83,36 @@ def featured_music(request):
 
     return render(request, 'home.html', {'featured_tracks': featured_tracks})
 
+
+def fetch_and_save_songs(request):
+    # Initialize Spotipy with your credentials
+    # Query Spotify for song data
+    # You can customize the query based on your requirements
+    query = request.GET.get('query')
+    results = sp.search(q= query, type='track', limit=10)
+
+    # Process and save the song data to your database
+    for track in results['tracks']['items']:
+        song = Song(
+            title=track['name'],
+            artist=track['artists'][0]['name'],
+            album=track['album']['name'],
+            # Add more fields and data as needed
+        )
+        song.save()
+
+    # Render a template or return a response
+    return render(request, 'collections.html')
+# myapp/views.py
+
+
+def discover_song_associations(request):
+    # Fetch and preprocess song data
+    songs = Song.objects.all()  # Modify this to fetch your songs
+    song_data = preprocess_song_data(songs)  # Implement this function
+
+    # Discover associations
+    associations = discover_associations(song_data, min_support=0.1, min_threshold=0.7)
+
+    # Render a template or return a response with the discovered associations
+    return render(request, 'collections.html', {'associations': associations})
