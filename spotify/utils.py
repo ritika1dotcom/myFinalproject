@@ -4,7 +4,7 @@ from mlxtend.frequent_patterns import association_rules
 def discover_associations(data, min_support=0.1, min_threshold=0.7):
     # Create a one-hot encoded DataFrame from your data
     # You may need to customize this based on your data structure
-    one_hot = data.groupby(['unique_identifier', 'song_field']).size().unstack().fillna(0)
+    one_hot = data.groupby(['title', 'artist']).size().unstack().fillna(0)
     one_hot = (one_hot > 0).astype(int)
 
     # Apply the Apriori algorithm
@@ -27,11 +27,11 @@ def preprocess_song_data(songs):
 
     for song in songs:
         # Extract relevant fields from the Song model
-        unique_identifier = song.unique_identifier  # Replace with your actual field name
-        song_field = song.song_field  # Replace with your actual field name
+        unique_identifier = song.title  # Replace with your actual field name
+        song_field = song.artist  # Replace with your actual field name
 
         # Append the data as a tuple or dictionary, depending on your data structure
-        song_data.append({'unique_identifier': unique_identifier, 'song_field': song_field})
+        song_data.append({'title': unique_identifier, 'artist': song_field})
 
     # Create a DataFrame or structure the data as needed for the Apriori algorithm
     # This step depends on your specific data format

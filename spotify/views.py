@@ -104,7 +104,6 @@ def fetch_and_save_songs(request):
 
     # Render a template or return a response
     return render(request, 'collections.html')
-# myapp/views.py
 
 
 def discover_song_associations(request):
@@ -115,5 +114,9 @@ def discover_song_associations(request):
     # Discover associations
     associations = discover_associations(song_data, min_support=0.1, min_threshold=0.7)
 
-    # Render a template or return a response with the discovered associations
-    return render(request, 'collections.html', {'associations': associations})
+    # Extract songs from associations or however you generate your playlist
+    # For example, if associations is a DataFrame containing song associations, you can extract the songs:
+    playlist_songs = list(associations['title'].unique())
+
+    # Pass the playlist_songs to the template
+    return render(request, 'playlist.html', {'playlist_songs': playlist_songs})
