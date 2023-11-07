@@ -3,6 +3,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from django.conf import settings
 import random
+from spotipy import Spotify
+
 
 # Fetch client credentials from settings
 SPOTIPY_CLIENT_ID = settings.SPOTIPY_CLIENT_ID

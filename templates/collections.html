@@ -1,24 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <section class="user-collections">
-        <!-- User's Collections Here -->
-        <div class="user-collections">
-            <div class="collection">
-                <h3>User Collection 1</h3>
-                <!-- Collection Content for User 1 -->
-            </div>
-    
-            <div class="collection">
-                <h3>User Collection 2</h3>
-                <!-- Collection Content for User 2 -->
-            </div>
-    
-            <!-- Add more collection divs for additional users -->
-    
-            <!-- ... (other content) ... -->
-        </div>
-    </section>
-
-{% endblock %}
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-semibold mb-4">My Playlist</h1>
+        <ul class="space-y-4">
+            <li class="flex items-center">
+                <img class="w-16 h-16 rounded" src="song1.jpg" alt="Album Cover">
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold">Song 1</h2>
+                    <p class="text-gray-600">Artist 1</p>
+                </div>
+                <audio class="ml-auto" controls>
+                    <source src="song1.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </li>
+            <li class="flex items-center">
+                <img class="w-16 h-16 rounded" src="song2.jpg" alt="Album Cover">
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold">Song 2</h2>
+                    <p class="text-gray-600">Artist 2</p>
+                </div>
+                <audio class="ml-auto" controls>
+                    <source src="song2.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </li>
+            <li class="flex items-center">
+                <img class="w-16 h-16 rounded" src="song3.jpg" alt="Album Cover">
+                <div class="ml-4">
+                    <h2 class="text-xl font-semibold">Song 3</h2>
+                    <p class="text-gray-600">Artist 3</p>
+                </div>
+                <audio class="ml-auto" controls>
+                    <source src="song3.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </li>
+            <!-- Add more songs as needed -->
+        </ul>
+    </div>
+    {% endblock %}
