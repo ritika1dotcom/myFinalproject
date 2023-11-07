@@ -9,6 +9,7 @@ from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 import pandas as pd
 from django.http import HttpResponse
+from spotipy import Spotify
 
 
 # Fetch client credentials from settings
