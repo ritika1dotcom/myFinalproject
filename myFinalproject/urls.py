@@ -27,7 +27,7 @@ urlpatterns = [
     path('', views.featured_music, name='home'),
     path('user/',include('user.urls')),
     path('content/',include('content.urls')),
-    path('spotify/',include('spotify.urls')),
+    path('spotify/', include('spotify.urls')),
     # path('about/', include('content.urls')),
 ]
 

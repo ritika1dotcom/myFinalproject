@@ -2,9 +2,9 @@
 
 {% block content %}
     <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-semibold mb-4">My Playlist</h1>
+        <h1 class="text-3xl font-semibold mb-4">Recommended Songs</h1>
         <ul class="space-y-4">
-            {% for song in playlist_songs %}
+            {% for song in recommendations %}
             <li class="flex items-center">
                 <img class="w-16 h-16 rounded" src="{{ song.image_url }}" alt="Album Cover">
                 <div class="ml-4">
