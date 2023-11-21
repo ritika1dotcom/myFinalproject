@@ -23,7 +23,21 @@ def signup(request):
             messages.error(request, 'There was an error creating your account.')
     else:
         form = UserCreationForm()
-    return render(request, 'base.html', {'form': form})
+    return render(request, 'home.html', {'form': form})
+
+def login(request):
+    if request.method == 'POST':
+        form = AvatarForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Account created successfully!')
+            return redirect('home')
+        else:
+            messages.error(request, 'There was an error creating your account.')
+    else:
+        form = AvatarForm()
+    return render(request, 'home.html', {'form': form})
+
 
 def send_welcome_email(recipient_email):
     send_mail(

@@ -96,7 +96,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'collections' username=user.username %}" class="flex items-center space-x-2 py-2 text-sm">
+                        <a href="#" class="flex items-center space-x-2 py-2 text-sm">
                             <i class="fa fa-music" style="color: white;"> Personalized</i> 
                         </a>
                     </li>
@@ -223,8 +223,8 @@
                     <form action="{% url 'signup' %}" method="POST">
                         {% csrf_token %}
                         <div class="mb-4">
-                            <label for="username" class="block text-gray-300">Full Name</label>
-                            <input type="text" id="username" name="username" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
+                            <label for="signup-username" class="block text-gray-300">Full Name</label>
+                            <input type="text" id="signup-username" name="signup-username" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
                         </div>
                         <div class="mb-4">
                             <label for="signup-email" class="block text-gray-300">Email</label>

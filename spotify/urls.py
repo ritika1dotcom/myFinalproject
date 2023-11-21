@@ -4,6 +4,6 @@ from . import views
 urlpatterns = [
     # ... other URL patterns ...
     path('search/', views.search_song, name='search'),
-    path('collections/<str:username>/', views.recommend_songs, name='collections'),
+    # path('collections/<str:username>/', views.recommend_songs, name='collections'),
 
 ]

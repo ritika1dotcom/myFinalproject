@@ -226,4 +226,4 @@ def recommend_songs(request, username):
         'recommendations': recommendations,
     }
 
-    return render(request, 'collections.html', context)
+    return render(request, 'col.html', context)
