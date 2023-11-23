@@ -44,4 +44,16 @@
     </div>
 </div>
 
+<h1>Listening History</h1>
+
+{% for sequence in listening_history %}
+    <h2>Sequence {{ forloop.counter }}</h2>
+    <ul>
+        {% for song_title in sequence %}
+            <li>{{ song_title }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+
+
 {% endblock %}

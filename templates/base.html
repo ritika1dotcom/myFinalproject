@@ -66,7 +66,7 @@
 
 <body>
     {% if messages %}
-        <div class="container mt-5">
+        <div class="container mt-5 bg-green-500 text-black">
             {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">
                 {{ message }}
@@ -177,7 +177,7 @@
     <!-- Login Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content bg-opacity-80 p-8 rounded-lg shadow-md">
+            <div class="modal-content bg-opacity-80 rounded-lg shadow-md">
                 <div class="modal-header border-0">
                     <h1 class="modal-title text-5xl font-semibold mb-4">Login</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -214,7 +214,7 @@
     <!-- Registration Modal -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content bg-opacity-80 p-8 rounded-lg shadow-md w-96">
+            <div class="modal-content bg-opacity-80 rounded-lg shadow-md w-96">
                 <div class="modal-header border-0">
                     <h1 class="modal-title text-2xl font-semibold mb-4 text-black" id="registerModalLabel">Sign Up</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -223,8 +223,8 @@
                     <form action="{% url 'signup' %}" method="POST">
                         {% csrf_token %}
                         <div class="mb-4">
-                            <label for="signup-username" class="block text-gray-300">Full Name</label>
-                            <input type="text" id="signup-username" name="signup-username" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
+                            <label for="username1" class="block text-gray-300">Full Name</label>
+                            <input type="text" id="username1" name="username1" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
                         </div>
                         <div class="mb-4">
                             <label for="signup-email" class="block text-gray-300">Email</label>
@@ -237,14 +237,6 @@
                         <div class="mb-4">
                             <label for="password2" class="block text-gray-300">Confirm Password</label>
                             <input type="password" id="password2" name="password2" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="dob" class="block text-gray-300">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="phone" class="block text-gray-300">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" class="border rounded w-full py-2 px-3 text-black bg-gray-300 focus:outline-none focus:border-blue-500" required>
                         </div>
                         <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline-blue active:bg-blue-700">Sign Up</button>
                     </form>

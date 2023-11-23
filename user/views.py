@@ -1,9 +1,9 @@
 import json
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from spotify.views import generate_listening_history
 from .form import AvatarForm
 from .models import PlayHistory, UserProfile
 from django.http import JsonResponse
@@ -14,30 +14,33 @@ def password_reset_done_with_message(request):
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Account created successfully!')
-            return redirect('login')
-        else:
-            messages.error(request, 'There was an error creating your account.')
-    else:
-        form = UserCreationForm()
-    return render(request, 'home.html', {'form': form})
+        # Retrieve form data from POST request
+        username = request.POST.get('username1')
+        email = request.POST.get('signup-email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
 
-def login(request):
-    if request.method == 'POST':
-        form = AvatarForm(request.POST)
-        if form.is_valid():
-            form.save()
+        # Validate form data
+        if not username or not email or not password1 or not password2:
+            messages.error(request, 'Please fill in all fields.')
+            return redirect('home')
+
+        if password1 != password2:
+            messages.error(request, 'Passwords do not match.')
+            return redirect('home')
+
+        # Create a new user
+        try:
+            user = User.objects.create_user(username=username, email=email, password=password1)
+            user.save()
             messages.success(request, 'Account created successfully!')
             return redirect('home')
-        else:
-            messages.error(request, 'There was an error creating your account.')
-    else:
-        form = AvatarForm()
-    return render(request, 'home.html', {'form': form})
+        except Exception as e:
+            messages.error(request, f'There was an error creating your account: {e}')
+            return redirect('home')
 
+    # If the request is not a POST request, render the signup page
+    return render(request, 'home.html')
 
 def send_welcome_email(recipient_email):
     send_mail(
@@ -51,9 +54,12 @@ def send_welcome_email(recipient_email):
 def user_song_history(request, username):
     user_obj = get_object_or_404(User, username=username)
     song_history = PlayHistory.objects.filter(user=user_obj).order_by('-date_played')  # newest songs first
+    listening_history = generate_listening_history(request, username)
+
     context = {
         'user_obj': user_obj,
-        'song_history': song_history
+        'song_history': song_history,
+        'listening_history': listening_history
     }
     return render(request, 'song_history.html', context)
 
