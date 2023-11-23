@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from django.conf import settings
@@ -17,27 +17,27 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIPY_CLI
 
 def search_song(request):
     query = request.GET.get('query')
-    
     # Start with song search
     song_results = sp.search(q=query, type='track', limit=10)
-    tracks = song_results['tracks']['items']
+    tracks = []
 
-    # If no songs found, try searching for artist and their songs
-    if not tracks:
-        artist_results = sp.search(q=query, type='artist', limit=1)
-        
-        if artist_results['artists']['items']:
-            artist = artist_results['artists']['items'][0]
-            artist_id = artist['id']
+    for track in song_results['tracks']['items']:
+        # Extract the album image URL
+        album_image_url = track["album"]["images"][0]["url"] if track["album"]["images"] else None
 
-            # Fetch the albums of the artist
-            albums = sp.artist_albums(artist_id, limit=5)  # Setting a limit to fetch 5 albums; you can adjust this
-        
-            for album in albums['items']:
-                album_tracks = sp.album_tracks(album['id'])['items']
-                tracks.extend(album_tracks)
+        # Add the track details to the list
+        track_data = {
+            "song_name": track["name"],
+            "artist_name": track["artists"][0]["name"],
+            "album_name": track["album"]["name"],
+            "album_image": album_image_url,
+            "preview_url": track.get("preview_url"),
+        }
+        tracks.append(track_data)
 
     return render(request, 'search.html', {'tracks': tracks})
+
+
 
 
 def featured_music(request):
@@ -79,47 +79,44 @@ def featured_music(request):
 
     return render(request, 'home.html', {'featured_tracks': featured_tracks})
 
+def generate_listening_history():
+    # Fetch all users
+    users = User.objects.all()
+    print("Users", users)
 
-def generate_listening_history(request, username):
-    # Fetch the listening history for a specific user
-    user = User.objects.get(username=username)
-    listening_history_entries = PlayHistory.objects.filter(user=user).order_by('date_played')
-
-    # Create a list to store sequences of song titles
+    # Create a list to store the listening history
     listening_history = []
 
-    # Initialize a sequence for the current user
-    current_sequence = []
+    # Iterate through each user
+    for user in users:
+        # Fetch the listening history entries for the user
+        user_history_entries = PlayHistory.objects.filter(user=user).order_by('date_played')
+        print("listening_history", user_history_entries)
 
-    # Iterate through the listening history entries
-    for entry in listening_history_entries:
-        song_title = entry.song_title
-        current_sequence.append(song_title)
+        # Create a list to represent the user's listening history
+        user_history = [entry.song_title for entry in user_history_entries]
 
-    # Append the current user's sequence to the listening history
-    listening_history.append(current_sequence)
+        # Append the user's history to the listening history list
+        listening_history.append({
+            'user': user.username,
+            'history': user_history,
+        })
 
-    # You can optionally include more history by considering all past songs
-    all_songs = [entry.song_title for entry in listening_history_entries]
-    listening_history.append(all_songs)
-
-    # You can return or render the listening history as needed
     return listening_history
 
-#Calculate the support count for each song in your dataset. The support count is the number of times a song appears in all listening sequences.
 
+#Calculate the support count for each song in your dataset. The support count is the number of times a song appears in all listening sequences.
 # def get_support_count(listening_history, song):
 #     count = 0
 #     for sequence in listening_history:
-#         if song in sequence:
-#             count += 1
+#         count += sequence.count(song)
 #     return count
 
 # #Determine the frequent itemsets, i.e., songs with support counts above a minimum threshold. You need to specify a minimum support count to consider a song frequent.
 
 # def get_frequent_itemsets(listening_history, min_support_count):
 #     frequent_itemsets = []
-#     min_support_count = 10
+#     min_support_count = 2
 #     all_songs = set(song for sequence in listening_history for song in sequence)
 
 #     for song in all_songs:
@@ -175,23 +172,37 @@ def generate_listening_history(request, username):
 #     return frequent_itemsets
 
 # # Once you have the frequent itemsets, you can generate association rules based on metrics like confidence, lift, etc.
-
-# def generate_association_rules(listening_history, min_support_count, min_confidence):
-#     frequent_itemsets = get_all_frequent_itemsets(listening_history, min_support_count)
+# def generate_association_rules_pruned(listening_history, min_support_count, min_confidence):
+#     frequent_itemsets = get_frequent_itemsets(listening_history, min_support_count)
+#     candidates = generate_candidates(frequent_itemsets)
+#     prune = prune_candidates(candidates, frequent_itemsets)
 #     association_rules = []
+#     print("After pruning candidates")
 
-#     for itemset in frequent_itemsets:
+#     for itemset in prune:
+#         # print("Length of itemset:", len(itemset))
 #         if len(itemset) < 2:
+#             # print("Length of itemset:", len(itemset))
 #             continue
+            
 #         for item in itemset:
 #             antecedent = itemset.difference({item})
+#             print("Antecedent:", antecedent)
 #             support_itemset = get_support_count(listening_history, itemset)
+#             print("support itemset:", support_itemset)
 #             support_antecedent = get_support_count(listening_history, antecedent)
-#             confidence = support_itemset / support_antecedent
+#             print("support:", support_antecedent)
+#             confidence = support_itemset / support_antecedent if support_antecedent > 0 else 0
+#             print("Confidence",confidence)
+
 #             if confidence >= min_confidence:
 #                 association_rules.append((antecedent, item, confidence))
+#                 print("Association Rule: {} -> {}, Confidence: {}".format(antecedent, item, confidence))
 
+#     print("After generating association rules")
 #     return association_rules
+
+
 
 # # Finally, you can use the association rules to recommend songs to users. You may recommend songs based on the songs they've already listened to. For example, if a user has listened to song A, the association rules can suggest song B.
 # def recommend_songs_to_user(user_history, association_rules, min_confidence, max_recommendations=10):
@@ -232,4 +243,36 @@ def generate_listening_history(request, username):
 #     }
 
 #     return render(request, 'collections.html', context)
+def recommend_song(request, username):
+    user_obj = get_object_or_404(User, username=username)
+    listening_history = generate_listening_history()
+    min_support_count = 2
+    min_confidence = 0.2
+    # frequent_itemsets = get_frequent_itemsets(listening_history, min_support_count)
+    # candidates = generate_candidates(frequent_itemsets)
+    # prune = prune_candidates(candidates, frequent_itemsets)
+    # print("Generating frequent itemsets")
+    # frequent_itemset = get_all_frequent_itemsets(listening_history, min_support_count)
+    # association_rule = generate_association_rules_pruned(listening_history, min_support_count, min_confidence)
+
+
+    # Calculate support counts for all songs in the listening history
+    songs_with_support = []
+    # for song in set(song for sequence in listening_history for song in sequence):
+    #     support_count = get_support_count(listening_history, song)
+    #     songs_with_support.append({'song': song, 'support_count': support_count})
+
+
+    context = {
+        'user_obj': user_obj,
+        'songs_with_support': songs_with_support,
+        'listening_history': listening_history,
+        # 'frequent_itemsets': frequent_itemsets,
+        # 'candidates' : candidates,
+        # 'prune': prune,
+        # # 'frequent_itemset': frequent_itemset,
+        # 'association_rule' : association_rule,
+    }
+    return render(request, 'collections.html', context)
+
 

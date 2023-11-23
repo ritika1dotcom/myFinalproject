@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mx-auto py-8">
+    <!-- <div class="container mx-auto py-8">
         <h1 class="text-3xl font-semibold mb-4">Recommended Songs</h1>
         <ul class="space-y-4">
             {% for song in recommendations %}
@@ -18,5 +18,15 @@
             </li>
             {% endfor %}
         </ul>
-    </div>
+    </div> -->
+    <h1>Listening History</h1>
+    {% for user_history in listening_history %}
+    <h2>{{ user_history.user }}</h2>
+    <ul>
+        {% for song_title in user_history.history %}
+            <li>{{ song_title }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+
 {% endblock %}

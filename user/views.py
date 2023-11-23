@@ -54,12 +54,10 @@ def send_welcome_email(recipient_email):
 def user_song_history(request, username):
     user_obj = get_object_or_404(User, username=username)
     song_history = PlayHistory.objects.filter(user=user_obj).order_by('-date_played')  # newest songs first
-    listening_history = generate_listening_history(request, username)
 
     context = {
         'user_obj': user_obj,
         'song_history': song_history,
-        'listening_history': listening_history
     }
     return render(request, 'song_history.html', context)
 
