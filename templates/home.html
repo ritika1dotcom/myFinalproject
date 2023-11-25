@@ -22,7 +22,7 @@
                     <h3>From the album <em>{{ track.album_name }}</em></h3>
                     <p>Popularity: {{ track.track_popularity }}</p>
                     {% if user.is_authenticated %}
-                        <button onclick="playSong('{{ track.preview_url }}', '{{ track.name }}', '{{ track.artist_name }}','{{track.album_image}}')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                        <button onclick="playSong('{{ track.preview_url }}', '{{ track.name }}', '{{ track.artist_name }}','{{track.album_image}}')" class="bg-gray-600 border border-green-700 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">
                             Play
                         </button>
                     {% endif %}

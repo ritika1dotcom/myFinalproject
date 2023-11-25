@@ -5,7 +5,7 @@ from django.conf import settings
 import random
 from user.models import PlayHistory
 from django.contrib.auth.models import User
-
+from itertools import chain, combinations
 
 # Fetch client credentials from settings
 SPOTIPY_CLIENT_ID = settings.SPOTIPY_CLIENT_ID
@@ -79,13 +79,41 @@ def featured_music(request):
 
     return render(request, 'home.html', {'featured_tracks': featured_tracks})
 
-def generate_listening_history():
+# def generate_listening_history():
+#     # Fetch all users
+#     users = User.objects.all()
+#     print("Users", users)
+
+#     # Create a list to store the listening history
+#     listening_history = []
+
+#     # Iterate through each user
+#     for user in users:
+#         # Fetch the listening history entries for the user
+#         user_history_entries = PlayHistory.objects.filter(user=user).order_by('date_played')
+#         print("listening_history", user_history_entries)
+
+#         # Create a list to represent the user's listening history
+#         user_history = [entry.song_title for entry in user_history_entries]
+
+#         # Append the user's history to the listening history list
+#         listening_history.append({
+#             'user': user.username,
+#             'history': user_history,
+#         })
+
+#     return listening_history
+
+def generate_listening_history(min_support_threshold):
     # Fetch all users
     users = User.objects.all()
     print("Users", users)
 
     # Create a list to store the listening history
     listening_history = []
+
+    # Count occurrences of each item (song) in the entire dataset
+    item_counts = {}
 
     # Iterate through each user
     for user in users:
@@ -95,184 +123,88 @@ def generate_listening_history():
 
         # Create a list to represent the user's listening history
         user_history = [entry.song_title for entry in user_history_entries]
+        print("user history", user_history)
+
+        # Update item counts based on the current user's history
+        for itemset in combinations(user_history, 2):
+            item_counts[itemset] = item_counts.get(itemset, 0) + 1
 
         # Append the user's history to the listening history list
-        listening_history.append({
-            'user': user.username,
-            'history': user_history,
-        })
+        listening_history.append(set(user_history))  # Convert to set to ensure unique items
 
-    return listening_history
+    # Calculate support for each itemset
+    dataset_size = len(listening_history)
+    itemset_support = {frozenset(itemset): count / dataset_size for itemset, count in item_counts.items() if count / dataset_size >= min_support_threshold}
 
+    # Filter itemsets based on the minimum support threshold
+    frequent_itemsets = {support: [itemset for itemset, support_value in itemset_support.items() if support_value == support] for support in set(itemset_support.values())}
 
-#Calculate the support count for each song in your dataset. The support count is the number of times a song appears in all listening sequences.
-# def get_support_count(listening_history, song):
-#     count = 0
-#     for sequence in listening_history:
-#         count += sequence.count(song)
-#     return count
-
-# #Determine the frequent itemsets, i.e., songs with support counts above a minimum threshold. You need to specify a minimum support count to consider a song frequent.
-
-# def get_frequent_itemsets(listening_history, min_support_count):
-#     frequent_itemsets = []
-#     min_support_count = 2
-#     all_songs = set(song for sequence in listening_history for song in sequence)
-
-#     for song in all_songs:
-#         support = get_support_count(listening_history, song)
-#         if support >= min_support_count:
-#             frequent_itemsets.append(frozenset({song}))
-#     return frequent_itemsets
-
-# # Implement the function to generate candidate itemsets from the frequent itemsets.
-# def generate_candidates(frequent_itemsets):
-#     candidates = set()
-#     for i in range(len(frequent_itemsets)):
-#         for j in range(i + 1, len(frequent_itemsets)):
-#             itemset1, itemset2 = frequent_itemsets[i], frequent_itemsets[j]
-#             union = itemset1.union(itemset2)
-#             if len(union) == len(itemset1) + 1:
-#                 candidates.add(frozenset(union))
-#     return candidates
-
-# # Prune the candidate itemsets to eliminate those that contain infrequent subsets. This step helps reduce the number of itemsets to check.
-# def prune_candidates(candidates, frequent_itemsets):
-#     pruned_candidates = set()
-#     for candidate in candidates:
-#         is_valid = True
-#         subsets = [candidate.difference({item}) for item in candidate]
-#         for subset in subsets:
-#             if subset not in frequent_itemsets:
-#                 is_valid = False
-#                 break
-#         if is_valid:
-#             pruned_candidates.add(candidate)
-#     return pruned_candidates
-
-# # Repeatedly generate candidates and prune until no more candidates can be formed. This process will give you frequent itemsets of different sizes.
-# def get_all_frequent_itemsets(listening_history, min_support_count):
-#     frequent_itemsets = []
-#     candidates = set()
-#     k = 1
-
-#     while True:
-#         if k == 1:
-#             candidates = get_frequent_itemsets(listening_history, min_support_count)
-#         else:
-#             candidates = generate_candidates(frequent_itemsets)
-#             candidates = prune_candidates(candidates, frequent_itemsets)
-
-#         if not candidates:
-#             break
-
-#         frequent_itemsets.extend(candidates)
-#         k += 1
-
-#     return frequent_itemsets
-
-# # Once you have the frequent itemsets, you can generate association rules based on metrics like confidence, lift, etc.
-# def generate_association_rules_pruned(listening_history, min_support_count, min_confidence):
-#     frequent_itemsets = get_frequent_itemsets(listening_history, min_support_count)
-#     candidates = generate_candidates(frequent_itemsets)
-#     prune = prune_candidates(candidates, frequent_itemsets)
-#     association_rules = []
-#     print("After pruning candidates")
-
-#     for itemset in prune:
-#         # print("Length of itemset:", len(itemset))
-#         if len(itemset) < 2:
-#             # print("Length of itemset:", len(itemset))
-#             continue
-            
-#         for item in itemset:
-#             antecedent = itemset.difference({item})
-#             print("Antecedent:", antecedent)
-#             support_itemset = get_support_count(listening_history, itemset)
-#             print("support itemset:", support_itemset)
-#             support_antecedent = get_support_count(listening_history, antecedent)
-#             print("support:", support_antecedent)
-#             confidence = support_itemset / support_antecedent if support_antecedent > 0 else 0
-#             print("Confidence",confidence)
-
-#             if confidence >= min_confidence:
-#                 association_rules.append((antecedent, item, confidence))
-#                 print("Association Rule: {} -> {}, Confidence: {}".format(antecedent, item, confidence))
-
-#     print("After generating association rules")
-#     return association_rules
+    return frequent_itemsets
 
 
 
-# # Finally, you can use the association rules to recommend songs to users. You may recommend songs based on the songs they've already listened to. For example, if a user has listened to song A, the association rules can suggest song B.
-# def recommend_songs_to_user(user_history, association_rules, min_confidence, max_recommendations=10):
-#     recommendations = []
+def generate_association_rules(frequent_itemsets, min_confidence):
+    association_rules = []
 
-#     for rule in association_rules:
-#         antecedent, consequent, confidence = rule
-#         if antecedent.issubset(user_history) and confidence >= min_confidence:
-#             recommendations.append((consequent, confidence))
+    for support, itemsets_list in frequent_itemsets.items():
+        for itemset in itemsets_list:
+            print("Itemset:", itemset)
+            itemset_list = list(itemset)
+            print("itemset_list", itemset_list)
+            antecedents = generate_antecedents(itemset_list)
+            print("Antecedents:", antecedents)
+            print("Support:", support)
 
-#     # Sort recommendations by confidence in descending order
-#     recommendations.sort(key=lambda x: x[1], reverse=True)
+            if len(antecedents) >= 2:
+                print("some...")
+                for antecedent in antecedents:
+                    antecedent_set = set(antecedent)
+                    consequent = set(itemset_list) - antecedent_set
+                    antecedent_support = sum(1 for other_itemset in frequent_itemsets[support] if antecedent_set.issubset(other_itemset))
+                    confidence = support / antecedent_support if antecedent_support > 0 else 0
 
-#     # Take the top 10 recommendations or fewer if there are fewer than 10
-#     top_recommendations = [recommendation[0] for recommendation in recommendations[:max_recommendations]]
+                    if confidence >= min_confidence:
+                        rule = {
+                            'antecedent': antecedent_set,
+                            'consequent': consequent,
+                            'support': support,
+                            'confidence': confidence
+                        }
+                        association_rules.append(rule)
 
-#     return top_recommendations
+    return association_rules
 
 
-# def recommend_songs(request, username):
-#     # Fetch the user's listening history and other data
-#     user = User.objects.get(username=username)  # Replace 'username' with your actual field name
-#     listening_history_entries = PlayHistory.objects.filter(user=user).order_by('date_played')
 
-#     listening_history = [entry.song_title for entry in listening_history_entries]
+def generate_antecedents(itemset_list):
+    length = len(itemset_list)
 
-#     # Generate association rules
-#     min_support_count = 10  # Set your desired support count threshold
-#     min_confidence = 0.7  # Set your desired confidence threshold
-#     association_rules = generate_association_rules(listening_history, min_support_count, min_confidence)
+    antecedents = []
 
-#     # Get song recommendations based on the user's history, limited to 10 recommendations
-#     recommendations = recommend_songs_to_user(listening_history, association_rules, min_confidence, max_recommendations=10)
+    for i in range(2, length + 1):  # Ensure that combinations have at least two items
+        antecedents.extend(combinations(itemset_list, i))
 
-#     context = {
-#         'username': username,
-#         'recommendations': recommendations,
-#     }
+    return antecedents
 
-#     return render(request, 'collections.html', context)
+
 def recommend_song(request, username):
     user_obj = get_object_or_404(User, username=username)
-    listening_history = generate_listening_history()
-    min_support_count = 2
-    min_confidence = 0.2
-    # frequent_itemsets = get_frequent_itemsets(listening_history, min_support_count)
-    # candidates = generate_candidates(frequent_itemsets)
-    # prune = prune_candidates(candidates, frequent_itemsets)
-    # print("Generating frequent itemsets")
-    # frequent_itemset = get_all_frequent_itemsets(listening_history, min_support_count)
-    # association_rule = generate_association_rules_pruned(listening_history, min_support_count, min_confidence)
+    min_support_threshold = 0.2
+    frequent_itemsets = generate_listening_history(min_support_threshold)
+    print("Frequent Itemsets:", frequent_itemsets)
+    min_confidence = 0.5
+    association_rules = generate_association_rules(frequent_itemsets, min_confidence)
 
-
-    # Calculate support counts for all songs in the listening history
-    songs_with_support = []
-    # for song in set(song for sequence in listening_history for song in sequence):
-    #     support_count = get_support_count(listening_history, song)
-    #     songs_with_support.append({'song': song, 'support_count': support_count})
+    for rule in association_rules:
+        print(f"Rule: If user listens to {rule['antecedent']}, then they are likely to listen to {rule['consequent']}. Confidence: {rule['confidence']}")
 
 
     context = {
-        'user_obj': user_obj,
-        'songs_with_support': songs_with_support,
-        'listening_history': listening_history,
-        # 'frequent_itemsets': frequent_itemsets,
-        # 'candidates' : candidates,
-        # 'prune': prune,
-        # # 'frequent_itemset': frequent_itemset,
-        # 'association_rule' : association_rule,
+        'frequent_itemsets' : frequent_itemsets,
+        # 'association_rules' : association_rules,
+        'user_obj' : user_obj,
     }
+
     return render(request, 'collections.html', context)
 
 
