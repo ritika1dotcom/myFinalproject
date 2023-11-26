@@ -1,26 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- <h1>Frequent Itemsets</h1>
-<ul>
-    {% for support, itemsets in frequent_itemsets.items %}
-        <li>Support: {{ support }} - Itemsets: {{ itemsets }}</li>
-    {% endfor %}
-</ul>
-
-<h1>Association Rules</h1>
-<ul>
-    {% for rule in association_rules %}
-        <li>
-            If user listens to {{ rule.antecedent }}, then they are likely to listen to {{ rule.consequent }}.
-            Confidence: {{ rule.confidence }}
-        </li>
-    {% endfor %}
-</ul> -->
-
 <h1>Recommended Songs for {{ user_obj.username }}</h1>
 
-<table>
+<table id="recommended-songs-table">
     <thead>
         <tr>
             <th>Song</th>
@@ -29,16 +12,12 @@
     </thead>
     <tbody>
         {% for recommendation in recommended_songs %}
-            {# Use |shuffle to randomize the order before slicing #}
             <tr>
                 <td>{{ recommendation.song }}</td>
-                <td>{{ recommendation.confidence }}%</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
-
-
 
 
 {% endblock %}
