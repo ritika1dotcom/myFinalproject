@@ -75,13 +75,13 @@ def featured_music(request):
 
     return render(request, 'home.html', {'featured_tracks': featured_tracks})
 
-def all_song():
+def get_all_songs():
     # Fetch a list of featured playlists
-    playlists = sp.featured_playlists(limit=20)  # You can adjust the limit as needed
+    playlists = sp.featured_playlists(limit=20)
     
-    # If no playlists were found, return an empty list
+    # If no playlists were found, return an empty dictionary
     if not playlists['playlists']['items']:
-        return []
+        return {}
 
     # Randomly select a playlist
     selected_playlist = random.choice(playlists['playlists']['items'])
@@ -91,7 +91,7 @@ def all_song():
     tracks_data = sp.playlist_tracks(playlist_uri)["items"]
 
     # Extract essential details for each track
-    all_music = []
+    all_music = {}
     for track_data in tracks_data:
         track = track_data["track"]
         
@@ -100,7 +100,8 @@ def all_song():
         artist_info = sp.artist(artist_uri)
         album_image_url = track["album"]["images"][0]["url"] if track["album"]["images"] else None
 
-        all_music.append({
+        song_key = track["name"]  # Assuming that the name of the song is unique
+        all_music[song_key] = {
             "uri": track["uri"],
             "name": track["name"],
             "artist_name": track["artists"][0]["name"],
@@ -108,11 +109,12 @@ def all_song():
             "artist_genres": artist_info["genres"],
             "album_name": track["album"]["name"],
             "track_popularity": track["popularity"],
-            "album_image" : album_image_url,
+            "album_image": album_image_url,
             "preview_url": track.get("preview_url") 
-        })
+        }
 
     return all_music
+
 
 
 def listening_history(user):
@@ -226,9 +228,6 @@ def calculate_confidence(user_song_data, antecedent, consequent, min_confidence=
     return max(confidence, min_confidence)
 
 
-
-
-
 def generate_user_association_rules(user_song_data, min_support_threshold, confidence_threshold):
     association_rules = []
 
@@ -257,7 +256,7 @@ def generate_user_association_rules(user_song_data, min_support_threshold, confi
 
 
 
-def recommend_songs(listening_history, association_rules):
+def recommend_songs(listening_history, association_rules, all_songs):
     updated_history = {}
 
     for rule in association_rules:
@@ -266,15 +265,30 @@ def recommend_songs(listening_history, association_rules):
         consequent_str = str(consequent)
 
         if antecedent_str in listening_history:
-            if consequent_str not in listening_history or confidence > updated_history.get(consequent_str, 0):
-                updated_history[consequent_str] = confidence
+            # Check if consequent_str is in the all_song dictionary
+            if consequent_str in all_songs:
+                existing_details = updated_history.get(consequent_str, {})
+                existing_confidence = existing_details.get('confidence', 0)
+
+                # Compare confidence with the existing value
+                if consequent_str not in listening_history or confidence > existing_confidence:
+                    song_details = all_songs[consequent_str]
+
+                    # Debugging print statements
+                    # print(f"Consequent: {consequent_str}")
+                    # print(f"Song Data Keys: {all_songs.keys()}")
+                    updated_history[consequent_str] = {
+                        'confidence': confidence,
+                        'song_details': song_details
+                    }
+
     
-    result = [{'song': song, 'confidence': confidence} for song, confidence in updated_history.items()]
+    result = [{'song': song, 'confidence': details['confidence'], 'song_details': details['song_details']} for song, details in updated_history.items()]
     
     # Add more print statements for debugging
-    print("Listening History:", listening_history)
-    print("Association Rules:", association_rules)
-    print("Updated History:", updated_history)
+    # print("Listening History:", listening_history)
+    # print("Association Rules:", association_rules)
+    # print("Updated History:", updated_history)
     print("Result:", result)
 
     result.sort(key=lambda x: x['confidence'], reverse=True)
@@ -305,16 +319,18 @@ def recommend_song(request, username):
         subsets_of_two = list(combinations(unique_antecedentes, 2))
 
         song_data = get_user_song_data()
-        print("song_data", song_data)
+        # print("song_data", song_data)
+        all_songs = get_all_songs() # <-- Corrected here
+        print("all_songs", all_songs)
         
         find_consequent = find_consequent_candidates(song_data, user_obj, user_listening_history)
         confidence = calculate_confidence(song_data, subsets_of_two, find_consequent)
 
         association_rules = generate_user_association_rules(song_data, min_support_threshold, min_confidence)
-        print("rules", association_rules)
+        # print("rules", association_rules)
 
         # Recommend songs based on association rules
-        recommended_songs = recommend_songs(user_listening_history, association_rules)
+        recommended_songs = recommend_songs(user_listening_history, association_rules, all_songs)
 
         # Randomly select 10 recommendations
         random_recommendations = random.sample(recommended_songs, min(10, len(recommended_songs)))
@@ -322,8 +338,16 @@ def recommend_song(request, username):
         # Print the recommendations in the terminal
         print("Recommended Songs:")
         for song in random_recommendations:
-            print(f"Song: {song['song']}, Confidence: {song['confidence']}")
+            song_name = song['song']
+            confidence = song['confidence']
+            song_details = song['song_details']
 
+            # Accessing specific details from song_details dictionary
+            artist_name = song_details.get('artist_name', 'N/A')
+            album_name = song_details.get('album_name', 'N/A')
+            album_image = song_details.get('album_image', 'N/A')
+            
+        print(f"Song: {song_name}, Confidence: {confidence}, Artist: {artist_name}, Album: {album_name}, Album Image: {album_image}")
         context = {
             'user_obj': user_obj,
             'recommended_songs': random_recommendations,
@@ -334,7 +358,7 @@ def recommend_song(request, username):
 
 def generate_random_recommendations(min_confidence):
     # Generate a list of random songs with high confidence
-    all_music = all_song()
+    all_music = get_all_songs()
     # num_recommendations = min(10, len(all_music))  # Limit to 15 songs or the number of available tracks
     random_songs = get_random_songs(10, all_music)
     random_recommendations = [{'song': song, 'confidence': min_confidence * 100} for song in random_songs]
