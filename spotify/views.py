@@ -347,7 +347,7 @@ def recommend_song(request, username):
             album_name = song_details.get('album_name', 'N/A')
             album_image = song_details.get('album_image', 'N/A')
             
-        print(f"Song: {song_name}, Confidence: {confidence}, Artist: {artist_name}, Album: {album_name}, Album Image: {album_image}")
+            print(f"Song: {song_name}, Confidence: {confidence}, Artist: {artist_name}, Album: {album_name}, Album Image: {album_image}")
         context = {
             'user_obj': user_obj,
             'recommended_songs': random_recommendations,

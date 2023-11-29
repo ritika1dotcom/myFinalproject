@@ -90,7 +90,7 @@
     </ul>
 {% endif %}
 
-    <div class = "bg-gray-600 h-screen flex">
+    <div class = "bg-white h-screen flex">
         <!-- Sidebar on the left -->
         <div class = "flex flex-col justify-between bg-gray-700 p-4 h-screen" style="width: 13rem;">
             <ul class="flex flex-col space-y-4">
@@ -165,18 +165,7 @@
                 <!-- Default content if no block content provided by a child template. Can be left empty if not needed -->
                 {% endblock %}
             </div>
-    
-            <!-- Music Player at the bottom -->
-            <div class="bg-white shadow-md">
-                    <audio id="audio-player" controls>
-                        {% if track %}
-                            <source id="audio-source" src="{{ track.preview_url }}" type="audio/mpeg">
-                        {% else %}
-                            <source id="audio-source" src="" type="audio/mpeg">
-                        {% endif %}
-                        Your browser does not support the audio element.
-                    </audio>                    
-            </div>
+
         </div>
     </div>
     <!-- ... -->
